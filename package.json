@@ -29,6 +29,5 @@
     "supervisor": "0.12.0",
     "file-type": "16.5.2",
     "sequelize": "6.13.0"
-    "nhentai-js": "^4.0.0",
   }
 }

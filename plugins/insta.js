@@ -27,10 +27,15 @@ if (url != null) {
 var res = await raganork.query.getPost(url[0],v )
 if (res === "false") return await msg.client.sendMessage(msg.jid, fail, MessageType.text, {quoted: msg.data});
 else await msg.client.sendMessage(msg.jid, downloading, MessageType.text, {quoted: msg.data});
-var buffer = await raganork.query.skbuffer(res.links[0].url)
-if (res.links[0].url.includes('mp4')) return await msg.client.sendMessage(msg.jid, buffer, MessageType.video, { mimetype: Mimetype.mp4, quoted: msg.data});
-if (res.links[0].url.includes('jpg')) return await msg.client.sendMessage(msg.jid, buffer, MessageType.image, { mimetype: Mimetype.jpg, quoted: msg.data});
-}
+var url = res.data
+for (var i = 0; i < (url.length); i++) {
+var get = got(url[i], {https: {rejectUnauthorized: false}});
+var type = url[i].includes('mp4') ? MessageType.video : MessageType.image
+var mime = url[i].includes('mp4') ? Mimetype.mp4 : Mimetype.jpg
+var stream = get.buffer();
+stream.then(async (video) => {
+await msg.client.sendMessage(msg.jid, video, type, { mimetype: mime, quoted: msg.data});
+})};}
 else if (url == null) {
 var linksplit = q.split('https://')[1]
 var res = await raganork.query.getPost('https://'+linksplit,v )
@@ -60,8 +65,10 @@ url += result.url + ','});
 var que = url !== false ? url.split(',') : [];
 for (var i = 0; i < (que.length < res.result.stories.length ? que.length : res.result.stories.length); i++) {
 var get = got(que[i], {https: {rejectUnauthorized: false}});
+var type = que[i].includes('mp4') ? MessageType.video : MessageType.image
+var mime = que[i].includes('mp4') ? Mimetype.mp4 : Mimetype.jpg
 var stream = get.buffer();
 stream.then(async (video) => {
-await msg.client.sendMessage(msg.jid, video, MessageType.video, { mimetype: Mimetype.mp4, caption: '```Story of '+res.result.username + '```', quoted: msg.data});
+await msg.client.sendMessage(msg.jid, video, type, { mimetype: mime, caption: '```Story of '+res.result.username + '```', quoted: msg.data});
 })};
 }));
